@@ -48,14 +48,22 @@ if (dropdown) {
         return window.btoa(binary);
     };
 
-    function setOverlayImage(image) {
+    function setOverlayImage(image, vaandel) {
 
         // create image element for the overlay
         var imageOverlay = document.createElement('img');
-        imageOverlay.style.maxWidth = percentagePx(productImage.clientWidth, 25);
-        imageOverlay.style.maxHeight = percentagePx(productImage.clientHeight, 25);
+
+        if (!vaandel) {
+            imageOverlay.style.maxWidth = percentagePx(productImage.clientWidth, 25);
+            imageOverlay.style.maxHeight = percentagePx(productImage.clientHeight, 25);
+        } else {
+            imageOverlay.style.width = percentagePx(productImage.clientWidth, 85);
+            imageOverlay.style.height = percentagePx(productImage.clientHeight, 25);
+        }
+
         imageOverlay.style.left = percentagePx(productImage.clientWidth, 8);
         imageOverlay.style.top = percentagePx(productImage.clientHeight, 10);
+
         imageOverlay.style.opacity = '0.8';
         imageOverlay.style.position = 'absolute';
         imageOverlay.classList.add('snijplank_afbeelding');
@@ -79,20 +87,19 @@ if (dropdown) {
 
     // add event listener to dropdown list
 
-    dropdown.addEventListener('change', function () {
+    function refreshImage() {
+        refreshText();
         if (dropdown.selectedIndex != 0) {
             removeOldImages();
             getImage()
                 .then(image => {
-                    if (dropdown.value == 'Vaandel') {
-                        setOverlayImage(image, false);
-                    } else {
-                        setOverlayImage(image, true);
-                    }
+                    setOverlayImage(image, dropdown.value == 'Vaandel');
                 })
                 .catch(err => window.errors.push(err));
         }
-    });
+    }
+
+    dropdown.addEventListener('change', refreshImage);
 }
 
 
@@ -127,10 +134,17 @@ if (fontSelect) {
         textElem.classList.add('snijplank-text-holder');
 
         textElem.style.position = 'absolute';
-        textElem.style.left = percentagePx(productImage.clientWidth, 8);
-        textElem.style.top = percentagePx(productImage.clientHeight, 36);
+
+        if (dropdown.value == 'Vaandel') {
+            textElem.style.left = percentagePx(productImage.clientWidth, 51);
+            textElem.style.top = percentagePx(productImage.clientHeight, 14);
+        } else {
+            textElem.style.left = percentagePx(productImage.clientWidth, 8);
+            textElem.style.top = percentagePx(productImage.clientHeight, 36);
+        }
         textElem.style.fontFamily = fontSelect.options[fontSelect.selectedIndex].value.toLowerCase().replace(/\b\w/g, function (l) { return l.toUpperCase() });
         textElem.style.opacity = '0.7';
+        textElem.style.fontSize = '13px';
 
         var text = document.createTextNode(text);
         textElem.appendChild(text);
@@ -149,17 +163,35 @@ if (fontSelect) {
         }
     }
 
+    function circularText(txt, radius, classIndex) {
+        txt = txt.split(""),
+            classIndex = document.getElementsByClassName("snijplank-text-holder")[classIndex];
+
+        var rotation = 50;
+        var deg = rotation / txt.length,
+            origin = 0;
+
+        txt.forEach((ea) => {
+            ea = `<p style='height:${radius}px;position:absolute;transform:rotate(${(-(rotation / 2)) + origin}deg);transform-origin:0 100%;text-align:center;width:10px;'>${ea}</p>`;
+            classIndex.innerHTML += ea;
+            origin += deg;
+        });
+    }
+
+    function refreshText() {
+        if (inputEl.value) {
+            removeTextHolders();
+            if (dropdown.value == 'Vaandel') {
+                addTextHolderToSnijplank(createTextHolder(""));
+                circularText(inputEl.value, 250, 0);
+            } else {
+                addTextHolderToSnijplank(createTextHolder(inputEl.value));
+            }
+
+        }
+    }
+
     // add event listener to dropdown list
-    inputEl.addEventListener('input', function () {
-        if (inputEl.value) {
-            removeTextHolders();
-            addTextHolderToSnijplank(createTextHolder(inputEl.value));
-        }
-    });    // add event listener to dropdown list
-    fontSelect.addEventListener('change', function () {
-        if (inputEl.value) {
-            removeTextHolders();
-            addTextHolderToSnijplank(createTextHolder(inputEl.value));
-        }
-    });
+    inputEl.addEventListener('input', refreshText);    // add event listener to dropdown list
+    fontSelect.addEventListener('change', refreshText);
 }
