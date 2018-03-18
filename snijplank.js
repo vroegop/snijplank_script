@@ -84,7 +84,11 @@ if (dropdown) {
             removeOldImages();
             getImage()
                 .then(image => {
-                    setOverlayImage(image);
+                    if (dropdown.value == 'Vaandel') {
+                        setOverlayImage(image, false);
+                    } else {
+                        setOverlayImage(image, true);
+                    }
                 })
                 .catch(err => window.errors.push(err));
         }
