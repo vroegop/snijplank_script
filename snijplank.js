@@ -3,11 +3,21 @@
  * 
  ************************************/
 
- // init error list
+// init error list
 window.errors = [];
 
 // get dropdown list for images
 var dropdown = document.querySelector('[name*=keuze_afbeelding]');
+
+// font loader 
+function loadScript(script) {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = script;
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+}
+
+loadScript('https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js');
+loadScript('https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js');
 
 if (dropdown) {
 
@@ -91,18 +101,11 @@ var inputEl = document.querySelector('[name*=tekst_]');
 var fontSelect = document.querySelector('[name*=keuze_lettertype]');
 
 if (fontSelect) {
-    // font loader 
-    (function () {
-        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-        po.src = 'https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-    })();
-
     function createFontArray() {
         var fonts = [];
         for (var i = 0; i < fontSelect.options.length; i++) {
             if (i != 0)
-                fonts.push(fontSelect.options[i].value.toLowerCase().replace(/\b\w/g, function(l){ return l.toUpperCase() }));
+                fonts.push(fontSelect.options[i].value.toLowerCase().replace(/\b\w/g, function (l) { return l.toUpperCase() }));
         }
         return fonts;
     }
@@ -122,7 +125,7 @@ if (fontSelect) {
         textElem.style.position = 'absolute';
         textElem.style.left = percentagePx(productImage.clientWidth, 8);
         textElem.style.top = percentagePx(productImage.clientHeight, 36);
-        textElem.style.fontFamily = fontSelect.options[fontSelect.selectedIndex].value.toLowerCase().replace(/\b\w/g, function(l){ return l.toUpperCase() });
+        textElem.style.fontFamily = fontSelect.options[fontSelect.selectedIndex].value.toLowerCase().replace(/\b\w/g, function (l) { return l.toUpperCase() });
         textElem.style.opacity = '0.7';
 
         var text = document.createTextNode(text);
