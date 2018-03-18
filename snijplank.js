@@ -151,5 +151,11 @@ if (fontSelect) {
             removeTextHolders();
             addTextHolderToSnijplank(createTextHolder(inputEl.value));
         }
+    });    // add event listener to dropdown list
+    fontSelect.addEventListener('change', function () {
+        if (inputEl.value) {
+            removeTextHolders();
+            addTextHolderToSnijplank(createTextHolder(inputEl.value));
+        }
     });
 }
